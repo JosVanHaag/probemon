@@ -15,6 +15,7 @@ import paho.mqtt.client as mqtt
 import json
 import struct
 import logging
+
 logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 
 
@@ -26,8 +27,8 @@ sensor_data = {'macaddress': "", 'time': "", 'make': "", 'ssid': "", 'rssi': 0}
 
 DEBUG = False
 
-
 def parse_rssi(packet):
+
     # parse dbm_antsignal from radiotap header
     # borrowed from python-radiotap module
     radiotap_header_fmt = '<BBHI'
@@ -122,38 +123,28 @@ def build_packet_callback(time_fmt, logger, delimiter, mac_info, ssid, rssi, mqt
 
 
 def main():
+
     global topic
 
     parser = argparse.ArgumentParser(description=DESCRIPTION)
-    parser.add_argument('-i', '--interface', help="capture interface")
-    parser.add_argument('-t', '--time', default='iso',
-                        help="output time format (unix, iso)")
-    parser.add_argument('-b', '--max-bytes', default=5000000,
-                        help="maximum log size in bytes before rotating")
-    parser.add_argument('-c', '--max-backups', default=99999,
-                        help="maximum number of log files to keep")
-    parser.add_argument('-d', '--delimiter', default='\t',
-                        help="output field delimiter")
-    parser.add_argument('-f', '--mac-info', action='store_true',
-                        help="include MAC address manufacturer")
-    parser.add_argument('-s', '--ssid', action='store_true',
-                        help="include probe SSID in output")
-    parser.add_argument('-r', '--rssi', action='store_true',
-                        help="include rssi in output")
-    parser.add_argument('-D', '--debug', action='store_true',
-                        help="enable debug output")
-    parser.add_argument('-l', '--log', action='store_true',
-                        help="enable scrolling live view of the logfile")
-    parser.add_argument('-x', '--mqtt-broker', default='',
-                        help="mqtt broker server")
-    parser.add_argument('-o', '--mqtt-port', default='1883',
-                        help="mqtt broker port")
-    parser.add_argument('-u', '--mqtt-user', default='', help="mqtt user")
-    parser.add_argument('-p', '--mqtt-password',
-                        default='', help="mqtt password")
-    parser.add_argument('-m', '--mqtt-topic',
-                        default='probemon/request', help="mqtt topic")
-    parser.add_argument('-P', '--pid', default='', help="PID File")
+
+    parser.add_argument('-i', '--interface',                                        help = "capture interface")
+    parser.add_argument('-t', '--time',             default = 'iso',                help = "output time format (unix, iso)")
+    parser.add_argument('-b', '--max-bytes',        default = 5000000,              help = "maximum log size in bytes before rotating")
+    parser.add_argument('-c', '--max-backups',      default = 99999,                help = "maximum number of log files to keep")
+    parser.add_argument('-d', '--delimiter',        default = '\t',                 help = "output field delimiter")
+    parser.add_argument('-f', '--mac-info',         action = 'store_true',          help = "include MAC address manufacturer")
+    parser.add_argument('-s', '--ssid',             action = 'store_true',          help = "include probe SSID in output")
+    parser.add_argument('-r', '--rssi',             action = 'store_true',          help = "include rssi in output")
+    parser.add_argument('-D', '--debug',            action = 'store_true',          help = "enable debug output")
+    parser.add_argument('-l', '--log',              action = 'store_true',          help = "enable scrolling live view of the logfile")
+    parser.add_argument('-x', '--mqtt-broker',      default = '',                   help = "mqtt broker server")
+    parser.add_argument('-o', '--mqtt-port',        default = '1883',               help = "mqtt broker port")
+    parser.add_argument('-w', '--logfile',                                          help = "logging output location"),
+    parser.add_argument('-u', '--mqtt-user',        default = '',                   help = "mqtt user")
+    parser.add_argument('-p', '--mqtt-password',    default = '',                   help = "mqtt password")
+    parser.add_argument('-m', '--mqtt-topic',       default = 'probemon/request',   help = "mqtt topic")
+    parser.add_argument('-P', '--pid',              default = '',                   help = "PID File")
     args = parser.parse_args()
 
     if not args.interface:
@@ -164,6 +155,7 @@ def main():
 
     # PID speichern
     if args.pid:
+
         if os.path.isfile(args.pid):
             print("%s already exists, exiting" % args.pid)
             sys.exit()
@@ -172,6 +164,7 @@ def main():
         open(args.pid, 'w').write(pid)
 
     try:
+
         if args.mqtt_user and args.mqtt_password:
             client.username_pw_set(args.mqtt_user, args.mqtt_password)
 
@@ -180,13 +173,20 @@ def main():
             client.loop_start()
 
         # setup our rotating logger
+
         logger = logging.getLogger(NAME)
         logger.setLevel(logging.INFO)
+
+        if args.logfile:
+            handler = RotatingFileHandler(args.logfile, maxBytes=int(args.max_bytes), backupCount=int(args.max_backups))
+            logger.addHandler(handler)
+
         if args.log:
             logger.addHandler(logging.StreamHandler(sys.stdout))
-        built_packet_cb = build_packet_callback(args.time, logger,
-                                                args.delimiter, args.mac_info, args.ssid, args.rssi, args.mqtt_topic)
+
+        built_packet_cb = build_packet_callback(args.time, logger, args.delimiter, args.mac_info, args.ssid, args.rssi, args.mqtt_topic)
         sniff(iface=args.interface, prn=built_packet_cb, store=0, monitor=True)
+
     finally:
         # Remove PID File on Exit
         if args.pid:
