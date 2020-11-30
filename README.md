@@ -4,12 +4,10 @@ A simple command line tool for monitoring and logging 802.11 probe requests. The
 
 ||||
 |--|--|--|
-|-i|-\-interface|
-|-t|-\-time| output time format (unix, iso)|
+|-i|-\-interface| defaults to mon0
 |-b|-\-max-bytes| maximum log size in bytes before rotating|
 |-c|-\-max-backups| maximum number of log files to keep|
 |-d|-\-delimiter| output field delimiter|
-|-f|-\-mac-info| include MAC address manufacturer|
 |-s|-\-ssid| include probe SSID in output|
 |-r|-\-rssi| include rssi in output|
 |-D|-\-debug| enable debug output|
@@ -20,4 +18,5 @@ A simple command line tool for monitoring and logging 802.11 probe requests. The
 |-u|-\-mqtt-user| mqtt user|
 |-p|-\-mqtt-password| mqtt password|
 |-m|-\-mqtt-topic| mqtt topic|
-|-P|-\-pid| help = PID File|
+|-I|-\-ignore| path to list of probe requests that can be ignored|
+|-e|-\-empty-ssid| show requests with empty ssid's|
