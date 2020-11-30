@@ -1,1 +1,5 @@
 *.log
+*.list
+.vscode/settings.json
+._probemon.py
+._ignore.txt

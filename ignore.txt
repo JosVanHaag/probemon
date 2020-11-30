@@ -1,0 +1,17 @@
+# Ignore-List
+
+# Every probe request will be checked against this list of regular expressions and ignored, if it matches. Please keep in mind, that you are matching
+# against a single string per probe request, which can differ relatively to you chosen delimiter (default = \t) and other options. Check the log file for clarity.
+# You can use "#" for comments and empty lines for better readability of this file. This file is not parsed during runtime, so the service has to be
+# restarted to come to effect
+
+
+# My own WFi
+My\sWiFi
+
+# My IOT devices
+aa:bb:cc:00:11:22
+bb:cc:dd:11:22:33
+
+# All Neighbor WiFis
+Sesame_Street.*
