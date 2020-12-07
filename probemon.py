@@ -121,9 +121,11 @@ def main():
             oMqttClient = mqtt.Client()
 
             # Initiate MQTT-Broker
-            if oArgs.mqtt_user and oArgs.mqtt_password and oArgs.mqtt_broker:
+            if oArgs.mqtt_broker:
                 oSyslogger.debug(datetime.now().isoformat() + "\tInitiating MQTT broker")
-                oMqttClient.username_pw_set(oArgs.mqtt_user, oArgs.mqtt_password)
+                # If username and password are provided, use them.
+                if oArgs.mqtt_user and oArgs.mqtt_password:
+                     oMqttClient.username_pw_set(oArgs.mqtt_user, oArgs.mqtt_password)
                 oMqttClient.connect(oArgs.mqtt_broker, int(oArgs.mqtt_port), 1)
                 oMqttClient.loop_start()
 
