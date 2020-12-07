@@ -1,8 +1,8 @@
 # Ignore-List
 
 # Every probe request will be checked against this list of regular expressions and ignored, if it matches. Please keep in mind, that you are matching
-# against a single string per probe request, which can differ relatively to you chosen delimiter (default = \t) and other options. Check the log file for clarity.
-# You can use "#" for comments and empty lines for better readability of this file. This file is not parsed during runtime, so the service has to be
+# against a single string per probe request, which can differ relatively to your chosen delimiter (default = \t) and other options. Check the log file for clarity.
+# You can use "#" for comments and empty lines for better readability of this file. This file is not parsed during runtime, so the service/script has to be
 # restarted to come to effect
 
 
